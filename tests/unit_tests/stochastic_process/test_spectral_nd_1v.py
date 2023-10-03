@@ -16,7 +16,9 @@ x_list = [np.linspace(0, W[i] - dw[i], nw) for i in range(n)]
 xy_list = np.array(np.meshgrid(*x_list, indexing='ij'))
 
 S_nd_1v = 125 / 4 * np.linalg.norm(xy_list, axis=0) ** 2 * np.exp(-5 * np.linalg.norm(xy_list, axis=0))
-SRM_object = SpectralRepresentation(n_sim, S_nd_1v, [dt, dt], dw, [nt, nt], [nw, nw], random_state=128)
+SRM_object = SpectralRepresentation(S_nd_1v, [dt, dt], dw, [nt, nt], [nw, nw],
+                                    n_samples=n_sim,
+                                    random_state=128)
 samples_nd_1v = SRM_object.samples
 
 

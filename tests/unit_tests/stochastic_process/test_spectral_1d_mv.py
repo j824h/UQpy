@@ -47,7 +47,7 @@ for i in range(m):
     g_jk[i, i] = np.ones_like(S_jk[0, 0])
 S_1d_mv = S_jk * g_jk
 
-SRM_object = SpectralRepresentation(n_sim, S_1d_mv, dt, df, nt, nf, random_state=128)
+SRM_object = SpectralRepresentation(S_1d_mv, dt, df, nt, nf, n_samples=n_sim, random_state=128)
 samples_1d_mv = SRM_object.samples
 
 
