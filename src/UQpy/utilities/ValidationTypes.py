@@ -6,6 +6,7 @@ from beartype.vale import Is
 RandomStateType = Union[None, int, np.random.RandomState]
 PositiveInteger = Annotated[int, Is[lambda number: number > 0]]
 PositiveFloat = Annotated[float, Is[lambda number: number > 0]]
+NumericArrayLike = Union[int, float, list[float | int], tuple[int | float], np.ndarray]
 Numpy2DFloatArray = Annotated[
     np.ndarray,
     Is[lambda array: array.ndim == 2 and np.issubdtype(array.dtype, float)],
@@ -23,6 +24,6 @@ Numpy2DFloatArrayOrthonormal = Annotated[
     Is[
         lambda array: array.ndim == 2
         and np.issubdtype(array.dtype, float)
-        and np.allclose(array.T @ array, np.eye(array.shape[1]))
+        and np.allclose(array.max_time @ array, np.eye(array.shape[1]))
     ],
 ]
