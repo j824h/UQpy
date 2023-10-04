@@ -18,9 +18,10 @@ max_time = 2 * np.pi / frequency_interval
 time_interval = max_time / n_times
 
 '''Test phi is zere'''
-# phi = np.zeros(shape=(1, n_frequencies))
+phi = np.zeros(shape=(1, n_frequencies))
+phi[0, 5] = 3
 '''Test constant phi'''
-phi = np.ones(shape=(1, n_frequencies)) * np.pi / 4
+# phi = np.ones(shape=(1, n_frequencies)) * np.pi / 4
 '''Test random phase angles'''
 # phi = np.random.uniform(low=0, high=2 * np.pi, size=(1, n_frequencies))
 
@@ -33,11 +34,11 @@ power_spectrum[5] = 1  # Has power at frequency 100 * frequency_interval = 0.5
 
 
 def srm_object():
-    return SpectralRepresentation(power_spectrum,
-                                  time_interval, frequency_interval,
-                                  n_times, n_frequencies,
-                                  n_samples=n_samples,
-                                  phi=phi)
+    srm = SpectralRepresentation(power_spectrum,
+                                 time_interval, frequency_interval,
+                                 n_times, n_frequencies)
+    srm.run(n_samples=n_samples, phi=phi)
+    return srm
 
 
 def sum_of_cosines(power_spectrum, phi,
@@ -49,7 +50,7 @@ def sum_of_cosines(power_spectrum, phi,
     for i in range(n_frequencies):
         w_i = frequency_interval * i
         coefficient = 2 * np.sqrt(power_spectrum[i] * frequency_interval)
-        term = coefficient * np.cos((w_i * time) + phi[0, i])  # Put a minus sign in the cos to fix it
+        term = coefficient * np.cos(-(w_i * time) + phi[0, i])  # Put a minus sign in the cos to fix it
         total += term
     return total
 
@@ -59,11 +60,15 @@ if __name__ == '__main__':
 
     # Compute the Spectral Representation as a direct sum of cosines
     time = np.linspace(0, (n_times - 1) * time_interval, num=n_times)
-    cosines = sum_of_cosines(power_spectrum, phi,
+    cosines = sum_of_cosines(power_spectrum, srm.phi,
                              time_interval, frequency_interval,
                              n_times, n_frequencies)
-    print(srm.phi)
-    print('all is close:', all(np.isclose(srm.samples[0, 0, :], cosines)))
+    print(srm.n_variables)
+    print(cosines.shape)
+    print(srm.phi.shape)
+    print(srm.samples.shape)
+    # print(srm.phi)
+    print('all is close:', all(np.isclose(np.squeeze(srm.samples), np.squeeze(cosines))))
     fig, ax = plt.subplots()
     ax.plot(time, srm.samples[0, 0, :], label='SRM FFT')
     ax.plot(time, cosines, linestyle=':', label='Sum of Cosines')
