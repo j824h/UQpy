@@ -2,7 +2,7 @@ import numpy as np
 from UQpy.utilities import *
 from beartype import beartype
 from beartype.vale import Is
-from typing import Annotated, Union
+from typing import Annotated, Union, Optional
 from UQpy.utilities.ValidationTypes import NumericArrayLike, PositiveInteger
 
 
@@ -15,8 +15,8 @@ class SpectralRepresentation:
             frequency_interval: NumericArrayLike,
             n_time_intervals: NumericArrayLike,
             n_frequency_intervals: NumericArrayLike,
-            n_samples: PositiveInteger = None,
-            random_state: RandomStateType = None,
+            n_samples: Optional[PositiveInteger] = None,
+            random_state: Optional[RandomStateType] = None,
     ):
         """A class to simulate stochastic processes from a given power spectrum density using the
         Spectral Representation Method :cite:`StochasticProcess2`.
@@ -51,7 +51,7 @@ class SpectralRepresentation:
          for each dimension of size :code:`n_dimensions`.
         :param random_state: Random seed used to initialize the pseudo-random number generator. Default is :code:`None`.
          If an :code:`int` or :code:`np.random.RandomState` is provided, this sets :py:meth:`np.random.seed`.
-        :param phi: Optional, phase angles (:math:`\Phi`) used in the Spectral Representation Method.
+        :param phi: Phase angles (:math:`\Phi`) used in the Spectral Representation Method.
         """
         self.power_spectrum = np.atleast_1d(power_spectrum)
         self.time_interval = np.atleast_1d(time_interval)
@@ -97,7 +97,7 @@ class SpectralRepresentation:
     @beartype
     def run(self,
             n_samples: PositiveInteger,
-            phi: np.ndarray = None):  # ToDo: Can we beartype phi? If not use an if statement inside the method
+            phi: Optional[np.ndarray] = None):  # ToDo: Can we beartype phi? If not use an if statement inside the method
         """Execute the random sampling in the :class:`.SpectralRepresentation` class.
 
         The :meth:`run` method is the function that performs random sampling in the :class:`.SpectralRepresentation`
