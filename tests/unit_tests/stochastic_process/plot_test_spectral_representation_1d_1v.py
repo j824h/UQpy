@@ -49,7 +49,7 @@ def sum_of_cosines(power_spectrum, phi,
     for i in range(n_frequencies):
         w_i = frequency_interval * i
         coefficient = 2 * np.sqrt(power_spectrum[i] * frequency_interval)
-        term = coefficient * np.cos((w_i * time) + phi[0, i])
+        term = coefficient * np.cos((w_i * time) + phi[0, i])  # Put a minus sign in the cos to fix it
         total += term
     return total
 
@@ -63,14 +63,9 @@ if __name__ == '__main__':
                              time_interval, frequency_interval,
                              n_times, n_frequencies)
     print(srm.phi)
-    weird_fix = np.zeros_like(cosines)
-    weird_fix[0] = cosines[0]
-    weird_fix[1:] = cosines[::-1][:-1]
-    print('Normal all is close:', all(np.isclose(srm.samples[0, 0, :], cosines)))
-    print('weird fix all is close:', all(np.isclose(srm.samples[0, 0, :], weird_fix)))
+    print('all is close:', all(np.isclose(srm.samples[0, 0, :], cosines)))
     fig, ax = plt.subplots()
     ax.plot(time, srm.samples[0, 0, :], label='SRM FFT')
     ax.plot(time, cosines, linestyle=':', label='Sum of Cosines')
-    ax.plot(time, weird_fix, linestyle=':', label='Flipped sum of cosines')
     ax.legend()
     plt.show()
