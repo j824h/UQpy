@@ -133,7 +133,6 @@ class SpectralRepresentation:
         """
         self.logger.info("UQpy: Stochastic Process: Running Spectral Representation Method.")
         self.n_samples = n_samples  # ToDo: Is assigning this to the class attribute the best way to do this?
-        samples = None
         phi = self.phi
 
         if self.case == "uni":
@@ -158,13 +157,14 @@ class SpectralRepresentation:
                 #                                                                      dtype=np.int32)
                 #                                                              * self.number_frequency_intervals,
                 #                                                              self.n_variables, ), )) * 2 * np.pi)
+
             samples = self._simulate_multi(phi)
 
         if self.samples is None:
             self.samples = samples
         else:
             self.samples = np.concatenate((self.samples, samples), axis=0)
-        if self.phi is None:
+        if self.phi is None:  # FixMe: this mistakenly concatenates when phi is not None
             self.phi = phi
         else:
             self.phi = np.concatenate((self.phi, phi), axis=0)
