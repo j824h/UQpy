@@ -150,7 +150,7 @@ class SpectralRepresentation:
                                                            * self.power_spectrum
                                                            * np.prod(self.frequency_interval)
                                                            )
-        samples = np.fft.fftn(fourier_coefficient, s=self.number_time_intervals)
+        samples = np.prod(self.number_time_intervals) * np.fft.ifftn(fourier_coefficient, s=self.number_time_intervals)
         samples = np.real(samples)
         samples = samples[:, np.newaxis]
         return samples
