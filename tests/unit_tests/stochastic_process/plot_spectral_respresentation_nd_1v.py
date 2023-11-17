@@ -33,11 +33,17 @@ phi = np.zeros(size)
 
 def power_spectrum(w_1, w_2):
     """Define n-dimension univariate power spectrum"""
-    if w_1 == 0.5 and w_2 == 0:
+    '''
+    works for 
+    (0.5, 0) and (-0.5, -0)
+    (0, 0.1) and (-0, -0.1)
+    (0.5, 0.1) and (-0.5, -0.1)
+    '''
+    if (w_1, w_2) == (0.5, 0) or (w_1, w_2) == (-0.5, 0):
         return 1
-    elif w_1 == 0 and w_2 == 0.1:
+    elif (w_1, w_2) == (0, 0.1) or (w_1, w_2) == (0, -0.1):
         return 1
-    if w_1 == 0.5 and w_2 == 0.1:
+    elif (w_1, w_2) == (0.5, 0.1) or (w_1, w_2) == (-0.5, -0.1):
         return 1
     else:
         return 0
@@ -48,7 +54,6 @@ for i in range(n_frequencies[0]):
     for j in range(n_frequencies[1]):
         w_1 = i * frequency_interval[0]
         w_2 = j * frequency_interval[1]
-        spectrum[i, j] = power_spectrum(w_1, w_2)
         spectrum[i, j] = power_spectrum(w_1, w_2)
 
 
@@ -86,23 +91,29 @@ def spectral_representation():
 srm_object = spectral_representation()
 srm_object.run(n_samples, phi=phi)
 print('n_variables', srm_object.n_variables)
-# '''Plot phase angles'''
+'''Plot phase angles'''
 # frequency_x, frequency_y = np.meshgrid(*frequency_vectors, indexing='ij')
 # fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 # ax.plot_surface(frequency_x, frequency_y, srm_object.phi[0, :, :], cmap='plasma')
 # ax.set_title('Phase Angles $\Phi$')
 
 '''Plot spectral representation samples'''
-fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-ax.plot_surface(x_array, y_array, srm_object.samples[0, 0, :, :], cmap='plasma')
+# fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+fig, ax = plt.subplots()
+ax.pcolormesh(x_array, y_array, srm_object.samples[0, 0, :, :], vmin=-0.3, vmax=0.7, cmap='plasma')
 ax.set_title('Sample of SRM Stochastic Process')
+ax.set_aspect('equal')
 
 '''Plot Cosine representation'''
 cosines = sum_of_cosines(srm_object.phi[0, :, :])
-fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-ax.plot_surface(x_array, y_array, cosines, cmap='plasma')
+# fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+fig, ax = plt.subplots()
+ax.pcolormesh(x_array, y_array, cosines, vmin=-0.3, vmax=0.7, cmap='plasma')
+# ax.plot_surface(x_array, y_array, cosines, vmin=-0.3, vmax=0.7, cmap='plasma')
 ax.set_title('Sample of Cosine Stochastic Process')
-
-print('all isclose:', (np.isclose(srm_object.samples[0, 0, :, :], cosines.T)).all())
-
+ax.set_aspect('equal')
+print('all isclose:', (np.isclose(srm_object.samples[0, 0, :, :], cosines)).all())
+print('same min:', np.min(srm_object.samples[0, 0, :, :]) == np.min(cosines))
+print('same max:', np.max(srm_object.samples[0, 0, :, :]) == np.max(cosines))
+print('SRM Mean:', np.mean(srm_object.samples[0, 0, :, :]), 'Cosine Mean:', np.mean(cosines))
 plt.show()
